@@ -1,0 +1,8 @@
+name = "${NAME}"
+description = "${DESCRIPTION}"
+core = 7.x
+#if (${PACKAGE} != '')
+package = ${PACKAGE}
+#end
+version = #if (${VERSION} != '') ${VERSION} #else 7.x-1.0-beta1 #end
+
