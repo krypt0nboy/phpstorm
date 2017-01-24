@@ -1,0 +1,28 @@
+<?php
+#set( $EMAIL = "youremail" )
+#set( $name_upper = $NAME.toUpperCase() )
+#set( $HASHTAG = "#" )
+#set( $PR = "[]" )
+
+/**
+ * @file
+ * ${NAME}.module
+ * 
+ * This file is the module file for ${NAME}.
+ * 
+ * @author ${USER} <${EMAIL}>
+ */
+
+/**
+ * The module's name.
+ */
+define('${name_upper}_PATH', drupal_get_path('module','${NAME}'));
+
+/**
+ * Implements hook_menu().
+ */
+function ${NAME}_menu() {
+  ${DS}items = array();
+
+  return ${DS}items;
+}

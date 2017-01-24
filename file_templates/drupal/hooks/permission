@@ -1,0 +1,47 @@
+<?php
+#set( $EMAIL = "youremail" )
+#set( $name_upper = $NAME.toUpperCase() )
+#set( $HASHTAG = "#" )
+#set( $PR = "[]" )
+
+/**
+ * @file
+ * ${NAME}.inc
+ * 
+ * This file contains the hook_permission() for the ${NAME} module.
+ * 
+ * @author ${USER} <${EMAIL}>
+ */
+ 
+/**
+ * Implements hook_permissions().
+ */
+function ${NAME}_permission() {
+  ${DS}permissions                             = array();
+  ${DS}permissions['administer.${ENTITY_PLURAL}']      = array(
+    'title'       => t('Administer ${ENTITY_PLURAL}'),
+    'description' => t('Edit and delete all ${ENTITY_PLURAL}.'),
+  );
+  ${DS}permissions['administer.${ENTITY_TYPE}_types'] = array(
+    'title'       => t('Administer ${ENTITY_TYPE} types'),
+    'description' => t('Create and delete fields for ${ENTITY_TYPE} types, and set their permissions.'),
+  );
+  foreach (${ENTITY_TYPE}_get_types() as ${DS}type) {
+    foreach (array('edit', 'view', 'delete') as ${DS}op) {
+      ${DS}permissions["${DS}op.any.${DS}type->type.${ENTITY_TYPE}_type"] = array(
+        'title' => t('%type_name: %op any ${ENTITY_TYPE}_type', array(
+          '%type_name' => ${DS}type->type,
+          '%op'        => ${DS}op
+        )),
+      );
+      ${DS}permissions["${DS}op.own.${DS}type->type.${ENTITY_TYPE}_type"] = array(
+        'title' => t('%type_name: %op own ${ENTITY_TYPE}_type', array(
+          '%type_name' => ${DS}type->type,
+          '%op'        => ${DS}op
+        )),
+      );
+    }
+  }
+
+  return ${DS}permissions;
+}

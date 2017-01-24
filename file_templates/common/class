@@ -1,0 +1,29 @@
+<?php
+#set( $EMAIL = "youremail" )
+#set( $name_upper = $NAME.toUpperCase() )
+#set( $HASHTAG = "#" )
+#set( $PR = "[]" )
+/**
+ * @file
+ * ${NAME}.inc
+ * 
+ * This file provides with ${NAME} class.
+ * 
+ * @author ${USER} <${EMAIL}>
+ */
+#if (${NAMESPACE} != '')
+
+namespace ${NAMESPACE};
+
+#end
+
+/**
+ * Class ${NAME}.
+ */
+class ${NAME} #if (${EXTENDS} != '') extends ${EXTENDS} #end{
+    /**
+     * ${NAME} constructor.
+     */
+    public function ${NAME}(){
+    }
+}

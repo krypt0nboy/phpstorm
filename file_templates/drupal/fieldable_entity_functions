@@ -1,0 +1,210 @@
+<?php
+
+#set( $EMAIL = "youremail" )
+#set( $name_upper = $NAME.toUpperCase() )
+#set( $HASHTAG = "#" )
+#set( $PR = "[]" )
+
+/**
+ * @file
+ * ${NAME}.functions.inc
+ * 
+ * This file provides with functions and callbacks for the entity type ${ENTITY_TYPE}.
+ * 
+ * @author ${USER} <${EMAIL}>
+ */
+
+/**
+ * Determines whether the given user has access to a ${ENTITY_TYPE}.
+ *
+ * @param string ${DS}op
+ *   The operation being performed. One of 'view', 'update', 'create', 'delete'
+ *   or just 'edit' (being the same as 'create' or 'update').
+ * @param object ${DS}${ENTITY_TYPE}
+ *   Optionally a ${ENTITY_TYPE} or a ${ENTITY_TYPE} type to check access for.
+ *   If nothing is given, access for all ${ENTITY_TYPE_PLURAL} is determined.
+ * @param object ${DS}account
+ *   The user to check for. Leave it to NULL to check for the global user.
+ *
+ * @return bool
+ *   Whether access is allowed or not.
+ */
+function ${ENTITY_TYPE}_access(${DS}op, ${DS}${ENTITY_TYPE} = NULL, ${DS}account = NULL) {
+  if (user_access('administer.${ENTITY_TYPE}s', ${DS}account)) {
+    return TRUE;
+  }
+  if (isset(${DS}${ENTITY_TYPE}) && ${DS}type_name = ${DS}${ENTITY_TYPE}->type) {
+    ${DS}op = (${DS}op == 'view') ? 'view' : 'edit';
+    if (user_access("${DS}op.any.${DS}type_name.${ENTITY_TYPE}", ${DS}account)) {
+      return TRUE;
+    }
+  }
+
+  ${DS}access = module_invoke_all('${ENTITY_TYPE}_access', ${DS}op, ${DS}${ENTITY_TYPE}, ${DS}account);
+  if (in_array(FALSE, ${DS}access, TRUE)) {
+    return FALSE;
+  }
+  elseif (in_array(TRUE, ${DS}access, TRUE)) {
+    return TRUE;
+  }
+
+  return FALSE;
+}
+
+/**
+ * Gets an array of all ${ENTITY_TYPE} types, keyed by the type name.
+ *
+ * @param string ${DS}type_name
+ *   If set, the type with the given name is returned.
+ *
+ * @return ${ENTITY_CLASS}Type[]
+ *   Depending whether ${DS}type isset, an array of ${ENTITY_TYPE} types
+ *   or a single one.
+ */
+function ${ENTITY_TYPE}_get_types(${DS}type_name = NULL) {
+  ${DS}types = entity_load_multiple_by_name('${ENTITY_TYPE}_type', isset(${DS}type_name) ? array(${DS}type_name) : FALSE);
+
+
+  return isset(${DS}type_name) ? reset(${DS}types) : ${DS}types;
+}
+
+/**
+ * Fetch a ${ENTITY_TYPE} object; make sure that the wildcard you choose
+ * in the ${ENTITY_TYPE} entity definition fits the function name here.
+ *
+ * @param int  ${DS}${ENTITY_TYPE}_id
+ *   Integer specifying the ${ENTITY_TYPE} id.
+ * @param bool ${DS}reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return ${ENTITY_CLASS}|bool
+ *   A fully-loaded ${DS}${ENTITY_TYPE} object or FALSE if it cannot be loaded.
+ *
+ * @see ${ENTITY_TYPE}_load_multiple()
+ */
+function ${ENTITY_TYPE}_load(${DS}${ENTITY_TYPE}_id, ${DS}reset = FALSE) {
+  ${DS}${ENTITY_TYPE_PLURAL} = ${ENTITY_TYPE}_load_multiple(array(${DS}${ENTITY_TYPE}_id), array(), ${DS}reset);
+
+  return reset(${DS}${ENTITY_TYPE_PLURAL});
+}
+
+/**
+ * Load multiple ${ENTITY_TYPE_PLURAL} based on certain conditions.
+ *
+ * @param array ${DS}${ENTITY_TYPE}_ids
+ *   An array of ${ENTITY_TYPE} IDs.
+ * @param array ${DS}conditions
+ *   An array of conditions to match against the {${ENTITY_TYPE}} table.
+ * @param bool  ${DS}reset
+ *   A boolean indicating that the internal cache should be reset.
+ *
+ * @return array
+ *   An array of ${ENTITY_TYPE} objects, indexed by ${ENTITY_TYPE}_id.
+ *
+ * @see entity_load()
+ * @see ${ENTITY_TYPE}_load()
+ */
+function ${ENTITY_TYPE}_load_multiple(${DS}${ENTITY_TYPE}_ids = array(), ${DS}conditions = array(), ${DS}reset = FALSE) {
+  return entity_load('${ENTITY_TYPE}', ${DS}${ENTITY_TYPE}_ids, ${DS}conditions, ${DS}reset);
+}
+
+/**
+ * Label callback for a ${ENTITY_TYPE}.
+ *
+ * @param \\${ENTITY_CLASS} ${DS}${ENTITY_TYPE}
+ *   The ${ENTITY_TYPE}.
+ * @param string ${DS}${ENTITY_TYPE}_type
+ *   The ${ENTITY_TYPE} bundle.
+ * 
+ * @return string
+ */
+function ${ENTITY_TYPE}_label(${DS}${ENTITY_TYPE}, ${DS}${ENTITY_TYPE}_type) {
+  return ${DS}${ENTITY_TYPE}->name;
+}
+
+/**
+ * Deletes a ${ENTITY_TYPE}.
+ *
+ * @param \\${ENTITY_CLASS} ${DS}${ENTITY_TYPE}
+ *   Entity ${ENTITY_TYPE}.
+ */
+function ${ENTITY_TYPE}_delete(${ENTITY_CLASS} ${DS}${ENTITY_TYPE}) {
+  ${DS}${ENTITY_TYPE}->delete();
+}
+
+/**
+ * Delete multiple ${ENTITY_TYPE}.
+ *
+ * @param array ${DS}${ENTITY_TYPE}_ids
+ *   An array of ${ENTITY_TYPE} IDs.
+ */
+function ${ENTITY_TYPE}_delete_multiple(array ${DS}${ENTITY_TYPE}_ids) {
+  entity_get_controller('${ENTITY_TYPE}')->delete(${DS}${ENTITY_TYPE}_ids);
+}
+
+/**
+ * Create a ${ENTITY_TYPE} object.
+ *
+ * @param array ${DS}values
+ *   An array of values.
+ */
+function ${ENTITY_TYPE}_create(${DS}values = array()) {
+  return entity_get_controller('${ENTITY_TYPE}')->create(${DS}values);
+}
+
+/**
+ * Saves a ${ENTITY_TYPE} to the database.
+ *
+ * @param \\${ENTITY_CLASS} ${DS}${ENTITY_TYPE}
+ *   The ${ENTITY_TYPE} object.
+ */
+function ${ENTITY_TYPE}_save(${ENTITY_CLASS} ${DS}${ENTITY_TYPE}) {
+  return ${DS}${ENTITY_TYPE}->save();
+}
+
+/**
+ * URI callback for ${ENTITY_TYPE_PLURAL}.
+ *
+ * @param \\${ENTITY_CLASS} ${DS}${ENTITY_TYPE}
+ *   The ${ENTITY_TYPE} object.
+ *
+ * @return array
+ *   URI callback.
+ */
+function ${ENTITY_TYPE}_uri(${ENTITY_CLASS} ${DS}${ENTITY_TYPE}) {
+  return array(
+    'path' => '${ENTITY_TYPE}/' . ${DS}${ENTITY_TYPE}->${ENTITY_TYPE}_id,
+  );
+}
+
+/**
+ * Menu title callback for showing individual entities.
+ *
+ * @param \\${ENTITY_CLASS} ${DS}${ENTITY_TYPE}
+ *   The ${ENTITY_TYPE} object.
+ *
+ * @return string
+ *   Menu title.
+ */
+function ${ENTITY_TYPE}_page_title(${ENTITY_CLASS} ${DS}${ENTITY_TYPE}) {
+  return ${DS}${ENTITY_TYPE}->name;
+}
+
+/**
+ * Sets up content to show an individual ${ENTITY_TYPE}.
+ *
+ * @param \\${ENTITY_CLASS} ${DS}${ENTITY_TYPE}
+ *   The ${ENTITY_TYPE} object.
+ * @param string   ${DS}view_mode
+ *   View mode.
+ *
+ * @return mixed
+ *   Content.
+ */
+function ${ENTITY_TYPE}_page_view(${ENTITY_CLASS} ${DS}${ENTITY_TYPE}, ${DS}view_mode = 'full') {
+  ${DS}controller = entity_get_controller('${ENTITY_TYPE}');
+  ${DS}content    = ${DS}controller->view(array(${DS}${ENTITY_TYPE}->${ENTITY_TYPE}_id => ${DS}${ENTITY_TYPE}));
+  drupal_set_title(${DS}${ENTITY_TYPE}->name);
+
+  return ${DS}content;
+}
